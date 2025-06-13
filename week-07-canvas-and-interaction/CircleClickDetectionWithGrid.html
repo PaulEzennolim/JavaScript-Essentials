@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grid Cell Click</title>
+  <meta name="author" content="Your Name">
+  <style>
+    canvas {
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas for drawing the grid and circles -->
+  <canvas id="myCanvas" width="400" height="400"></canvas>
+
+  <!-- Display the clicked cell information -->
+  <div id="cellInfo"></div>
+
+  <script>
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const gridSize = 4;
+    const cellSize = canvas.width / gridSize;
+
+    // Function to draw the 2D grid pattern
+    function drawGrid() {
+      for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+          ctx.strokeRect(i * cellSize, j * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    // Function to draw a circle in the specified cell
+    function drawCircle(x, y) {
+      const centerX = x * cellSize + cellSize / 2;
+      const centerY = y * cellSize + cellSize / 2;
+      const radius = cellSize / 2 - 5; // Adjust radius to fit within the cell
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = "blue"; // You can change the color
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Function to handle mouse click event
+    function handleMouseClick(event) {
+      const mouseX = event.clientX - canvas.getBoundingClientRect().left;
+      const mouseY = event.clientY - canvas.getBoundingClientRect().top;
+
+      const clickedCellX = Math.floor(mouseX / cellSize);
+      const clickedCellY = Math.floor(mouseY / cellSize);
+
+      // Draw a circle in the clicked cell
+      drawCircle(clickedCellX, clickedCellY);
+
+      // Display clicked cell information
+      const cellInfoDiv = document.getElementById("cellInfo");
+      cellInfoDiv.textContent = `Clicked Cell: (${clickedCellX}, ${clickedCellY}), Coordinates: (${mouseX}, ${mouseY})`;
+    }
+
+    // Draw the grid when the page loads
+    drawGrid();
+
+    // Add event listener for mouse click
+    canvas.addEventListener("click", handleMouseClick);
+  </script>
+
+</body>
+</html>

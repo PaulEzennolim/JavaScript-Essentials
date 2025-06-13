@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Temperature Converter</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+
+<body>
+  <script>
+    // Function to convert Fahrenheit to Celsius
+    function convertToFahrenheit() {
+      // Read temperature in Fahrenheit from the user
+      var fahrenheit = prompt("Enter temperature in Fahrenheit:");
+
+      // Check if the input is a valid number
+      if (isNaN(fahrenheit)) {
+        alert("Invalid input. Please enter a valid number.");
+        return;
+      }
+
+      // Convert Fahrenheit to Celsius using the formula c = (f-32)*5/9
+      var celsius = (parseFloat(fahrenheit) - 32) * 5 / 9;
+
+      // Display the result with 4 decimal places
+      alert("Temperature in Celsius: " + celsius.toFixed(4));
+    }
+
+    // Call the function when the page is loaded
+    window.onload = convertToFahrenheit;
+  </script>
+</body>
+
+</html>

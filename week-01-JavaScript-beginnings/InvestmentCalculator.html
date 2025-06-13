@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Investment Calculator</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <script>
+    function calculateYears() {
+      // Read input values from the user
+      const initialSum = parseFloat(prompt("Enter the initial sum of money:"));
+      const desiredSum = parseFloat(prompt("Enter the desired sum of money:"));
+      const annualInterestRate = parseFloat(prompt("Enter the annual interest rate in percentage:"));
+
+      // Convert interest rate to decimal
+      const interestRate = annualInterestRate / 100;
+
+      // Initialize variables
+      let currentSum = initialSum;
+      let years = 0;
+
+      // Use a while loop to iterate until the current sum is greater than or equal to the desired sum
+      while (currentSum < desiredSum) {
+        // Calculate interest for the current year
+        const interest = currentSum * interestRate;
+
+        // Add interest to the current sum
+        currentSum += interest;
+
+        // Increment the number of years
+        years++;
+      }
+
+      // Output the result
+      alert(`It will take ${years} years to grow from ${initialSum} to ${desiredSum} at an annual interest rate of ${annualInterestRate}%.`);
+    }
+
+    // Call the function when the page loads
+    calculateYears();
+  </script>
+
+</body>
+</html>

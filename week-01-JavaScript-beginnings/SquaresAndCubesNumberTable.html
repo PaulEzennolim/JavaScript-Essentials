@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Number Table</title>
+  <meta name="author" content="Paul  Ezennolim">
+</head>
+
+<body>
+  <script>
+    // Function to display a table of integers, squares, and cubes
+    function displayTable() {
+      // Create a table header
+      document.write('<table border="1">');
+      document.write('<tr><th>Number</th><th>Square</th><th>Cube</th></tr>');
+
+      // Generate rows for numbers 1 to 10
+      for (var i = 1; i <= 10; i++) {
+        var square = i * i;
+        var cube = i * i * i;
+
+        // Create a table row for each number, square, and cube
+        document.write('<tr>');
+        document.write('<td>' + i + '</td>');
+        document.write('<td>' + square + '</td>');
+        document.write('<td>' + cube + '</td>');
+        document.write('</tr>');
+      }
+
+      // Close the table
+      document.write('</table>');
+    }
+
+    // Call the function when the page is loaded
+    window.onload = displayTable;
+  </script>
+</body>
+
+</html>

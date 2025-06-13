@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Check for Three Adjoining 1s</title>
+  <meta name="author" content="Paul Ezennolim">
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    td {
+      border: 1px solid black;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    // Function to generate a random 0 or 1
+    function getRandomBinary() {
+      return Math.round(Math.random());
+    }
+
+    // Function to create a 2D array with dimensions rows x cols and fill it with random 0s and 1s
+    function createRandom2DArray(rows, cols) {
+      const array2D = [];
+
+      for (let i = 0; i < rows; i++) {
+        const row = [];
+        for (let j = 0; j < cols; j++) {
+          row.push(getRandomBinary());
+        }
+        array2D.push(row);
+      }
+
+      return array2D;
+    }
+
+    // Function to check if three adjoining horizontal or vertical index locations have a 1 stored in them
+    function hasThreeAdjoiningOnes(array2D) {
+      const rows = array2D.length;
+      const cols = array2D[0].length;
+
+      // Check horizontally
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols - 2; j++) {
+          if (array2D[i][j] === 1 && array2D[i][j + 1] === 1 && array2D[i][j + 2] === 1) {
+            return true;
+          }
+        }
+      }
+
+      // Check vertically
+      for (let i = 0; i < rows - 2; i++) {
+        for (let j = 0; j < cols; j++) {
+          if (array2D[i][j] === 1 && array2D[i + 1][j] === 1 && array2D[i + 2][j] === 1) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    // Create a 2D array with dimensions 5x5 filled with random 0s and 1s
+    const random2DArray = createRandom2DArray(5, 5);
+
+    // Display the original 2D array on the HTML page
+    document.write('<p>Original 2D Array:</p>');
+    document.write('<table>');
+    for (let i = 0; i < random2DArray.length; i++) {
+      document.write('<tr>');
+      for (let j = 0; j < random2DArray[i].length; j++) {
+        document.write('<td>' + random2DArray[i][j] + '</td>');
+      }
+      document.write('</tr>');
+    }
+    document.write('</table>');
+
+    // Check if three adjoining 1s exist
+    const hasAdjoiningOnes = hasThreeAdjoiningOnes(random2DArray);
+    document.write('<p>Has Three Adjoining 1s: ' + hasAdjoiningOnes + '</p>');
+  </script>
+
+</body>
+</html>

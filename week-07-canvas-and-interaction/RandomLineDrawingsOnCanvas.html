@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas Drawing</title>
+  <meta name="author" content="Paul Ezennolim">
+  <style>
+    /* Apply border to the canvas */
+    canvas {
+      border: 1px solid #000;
+    }
+
+    /* Style body to be a flex container with center alignment */
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh; /* Set the body height to 100% of the viewport height */
+      margin: 0; /* Remove default margin */
+    }
+
+    /* Add margin to buttons for spacing */
+    button {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas for drawing lines -->
+  <canvas id="myCanvas" width="300" height="300"></canvas>
+
+  <!-- Buttons for drawing lines and clearing the canvas -->
+  <button onclick="drawLine('red')">Red Line</button>
+  <button onclick="drawLine('green')">Green Line</button>
+  <button onclick="drawLine('blue')">Blue Line</button>
+  <button onclick="clearCanvas()">Clear</button>
+
+  <script>
+    // Get the canvas element and its 2d rendering context
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Function to draw a line of the specified color between two random positions
+    function drawLine(color) {
+      const startX = Math.random() * canvas.width;
+      const startY = Math.random() * canvas.height;
+      const endX = Math.random() * canvas.width;
+      const endY = Math.random() * canvas.height;
+
+      // Begin drawing path
+      ctx.beginPath();
+
+      // Set the stroke color
+      ctx.strokeStyle = color;
+
+      // Move to the starting position
+      ctx.moveTo(startX, startY);
+
+      // Draw a line to the ending position
+      ctx.lineTo(endX, endY);
+
+      // Stroke the path to actually draw the line
+      ctx.stroke();
+    }
+
+    // Function to clear the canvas
+    function clearCanvas() {
+      // Clear the entire canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  </script>
+
+</body>
+</html>

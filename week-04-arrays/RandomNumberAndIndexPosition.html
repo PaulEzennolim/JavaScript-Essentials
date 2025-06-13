@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Numbers and Index Positions</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <script>
+    // Function to generate a random number between min (inclusive) and max (inclusive)
+    function getRandomNumber(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    // Create an array of 10 random numbers in the range 0 to 20
+    const randomNumbers = Array.from({ length: 10 }, () => getRandomNumber(0, 20));
+
+    // Display the array on the HTML page
+    document.write('<p>Random Numbers: ' + randomNumbers.join(', ') + '</p>');
+
+    // Find and display the index positions of numbers greater than 10
+    const indicesGreaterThan10 = [];
+    randomNumbers.forEach((number, index) => {
+      if (number > 10) {
+        indicesGreaterThan10.push(index);
+      }
+    });
+
+    document.write('<p>Indices of Numbers Greater Than 10: ' + indicesGreaterThan10.join(', ') + '</p>');
+  </script>
+
+</body>
+</html>

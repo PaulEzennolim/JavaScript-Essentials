@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Animated Circle</title>
+  <meta name="author" content="Paul Ezennolim">
+  <style>
+    canvas {
+      border: 1px solid #000;
+    }
+
+    #caption {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas for drawing the circle -->
+  <canvas id="myCanvas" width="400" height="400"></canvas>
+
+  <!-- Caption below the canvas -->
+  <div id="caption">Click anywhere on the canvas to move the circle.</div>
+
+  <script>
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+    const caption = document.getElementById("caption");
+
+    let circle = {
+      x: 50,
+      y: 50,
+      radius: 20,
+      targetX: 50,
+      targetY: 50,
+      speed: 2
+    };
+
+    function drawCircle() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = 'blue';
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    function updateCircle() {
+      // Calculate the distance to the target
+      const dx = circle.targetX - circle.x;
+      const dy = circle.targetY - circle.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // If the distance is greater than the speed, move towards the target
+      if (distance > circle.speed) {
+        // Calculate the normalized direction
+        const dirX = dx / distance;
+        const dirY = dy / distance;
+
+        // Move towards the target
+        circle.x += dirX * circle.speed;
+        circle.y += dirY * circle.speed;
+      } else {
+        // Snap to the target if close enough
+        circle.x = circle.targetX;
+        circle.y = circle.targetY;
+      }
+    }
+
+    function animate() {
+      updateCircle();
+      drawCircle();
+      requestAnimationFrame(animate);
+    }
+
+    // Handle canvas click event
+    canvas.addEventListener("click", function(event) {
+      // Update the target position to the clicked point
+      circle.targetX = event.clientX - canvas.getBoundingClientRect().left;
+      circle.targetY = event.clientY - canvas.getBoundingClientRect().top;
+    });
+
+    // Start the animation loop
+    animate();
+  </script>
+
+</body>
+</html>

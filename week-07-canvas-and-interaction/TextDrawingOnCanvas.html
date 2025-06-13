@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Text Drawing</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <!-- Section for user input -->
+  <label for="textInput">Enter Text: </label>
+  <input type="text" id="textInput" placeholder="Enter text...">
+
+  <label for="fontSizeInput">Font Size: </label>
+  <input type="number" id="fontSizeInput" placeholder="Enter font size...">
+
+  <!-- Button to trigger text drawing -->
+  <button onclick="drawText()">Draw Text</button>
+
+  <!-- Canvas to draw text -->
+  <canvas id="myCanvas" width="400" height="400" style="border:1px solid #000;"></canvas>
+
+  <script>
+    // Get the canvas element and its 2D rendering context
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Function to draw text on the canvas
+    function drawText() {
+      // Get the user input values
+      const textInput = document.getElementById("textInput").value;
+      const fontSizeInput = document.getElementById("fontSizeInput").value;
+
+      // Convert font size to a string with "px" suffix
+      const fontSize = fontSizeInput + "px";
+
+      // Clear the canvas before drawing
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Set the font style for drawing text
+      ctx.font = fontSize + " Arial";
+      
+      // Draw the text in the center of the canvas
+      ctx.fillText(textInput, canvas.width / 2, canvas.height / 2);
+    }
+  </script>
+
+</body>
+</html>

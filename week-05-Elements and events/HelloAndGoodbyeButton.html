@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hello Goodbye Page</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <!-- Add a div element with an id to target for displaying the words -->
+  <div id="wordContainer"></div>
+
+  <!-- Add a Hello button that, when pressed, calls a JavaScript function to add the word 'Hello' -->
+  <button onclick="addWord('Hello')">Hello</button>
+
+  <!-- Add a Goodbye button that, when pressed, calls a JavaScript function to add the word 'Goodbye' -->
+  <button onclick="addWord('Goodbye')">Goodbye</button>
+
+  <script>
+    // Function to add a word to the div element
+    function addWord(word) {
+      // Get the div element by its id
+      const wordContainer = document.getElementById('wordContainer');
+
+      // Create a new paragraph element
+      const paragraph = document.createElement('p');
+
+      // Create a text node with the specified word
+      const wordText = document.createTextNode(word);
+
+      // Append the text node to the paragraph element
+      paragraph.appendChild(wordText);
+
+      // Append the paragraph element to the div element
+      wordContainer.appendChild(paragraph);
+    }
+  </script>
+
+</body>
+</html>

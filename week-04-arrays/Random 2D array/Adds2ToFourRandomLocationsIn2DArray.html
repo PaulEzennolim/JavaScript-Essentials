@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random 2D Array</title>
+  <meta name="author" content="Paul Ezennolim">
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    td {
+      border: 1px solid black;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    // Function to generate a random 0 or 1
+    function getRandomBinary() {
+      return Math.round(Math.random());
+    }
+
+    // Function to create a 2D array with dimensions rows x cols and fill it with random 0s and 1s
+    function createRandom2DArray(rows, cols) {
+      const array2D = [];
+
+      for (let i = 0; i < rows; i++) {
+        const row = [];
+        for (let j = 0; j < cols; j++) {
+          row.push(getRandomBinary());
+        }
+        array2D.push(row);
+      }
+
+      return array2D;
+    }
+
+    // Function to count the total number of 1s and 0s in the 2D array
+    function countOnesAndZeros(array2D) {
+      let countOnes = 0;
+      let countZeros = 0;
+
+      for (let i = 0; i < array2D.length; i++) {
+        for (let j = 0; j < array2D[i].length; j++) {
+          if (array2D[i][j] === 1) {
+            countOnes++;
+          } else {
+            countZeros++;
+          }
+        }
+      }
+
+      return { countOnes, countZeros };
+    }
+
+    // Function to choose four random locations in the array and add 2 to the numbers stored in those locations
+    function addTwoToRandomLocations(array2D) {
+      for (let i = 0; i < 4; i++) {
+        const randomRow = Math.floor(Math.random() * array2D.length);
+        const randomCol = Math.floor(Math.random() * array2D[randomRow].length);
+        array2D[randomRow][randomCol] += 2;
+      }
+    }
+
+    // Create a 2D array with dimensions 5x5 filled with random 0s and 1s
+    const random2DArray = createRandom2DArray(5, 5);
+
+    // Display the original 2D array on the HTML page
+    document.write('<p>Original 2D Array:</p>');
+    document.write('<table>');
+    for (let i = 0; i < random2DArray.length; i++) {
+      document.write('<tr>');
+      for (let j = 0; j < random2DArray[i].length; j++) {
+        document.write('<td>' + random2DArray[i][j] + '</td>');
+      }
+      document.write('</tr>');
+    }
+    document.write('</table>');
+
+    // Add 2 to four random locations in the array
+    addTwoToRandomLocations(random2DArray);
+
+    // Display the modified 2D array on the HTML page
+    document.write('<p>Modified 2D Array:</p>');
+    document.write('<table>');
+    for (let i = 0; i < random2DArray.length; i++) {
+      document.write('<tr>');
+      for (let j = 0; j < random2DArray[i].length; j++) {
+        document.write('<td>' + random2DArray[i][j] + '</td>');
+      }
+      document.write('</tr>');
+    }
+    document.write('</table>');
+  </script>
+
+</body>
+</html>

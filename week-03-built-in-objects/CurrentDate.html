@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Current Date</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <script>
+    // Function to convert day number to day name
+    function getDayName(dayNumber) {
+      const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      return daysOfWeek[dayNumber];
+    }
+
+    // Create a new Date object
+    const currentDate = new Date();
+
+    // Get day, date, and month
+    const dayNumber = currentDate.getDay();
+    const dayName = getDayName(dayNumber);
+    const date = currentDate.getDate();
+    const month = currentDate.toLocaleString('en-us', { month: 'long' }); // Full month name
+
+    // Display the current date without time data
+    document.write(`${dayName}, ${date} ${month} ${currentDate.getFullYear()}`);
+  </script>
+
+</body>
+</html>

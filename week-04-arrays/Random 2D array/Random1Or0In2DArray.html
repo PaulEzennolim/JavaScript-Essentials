@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random 2D Array</title>
+  <meta name="author" content="Your Name">
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    td {
+      border: 1px solid black;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    // Function to generate a random 0 or 1
+    function getRandomBinary() {
+      return Math.round(Math.random());
+    }
+
+    // Function to create a 2D array with dimensions rows x cols and fill it with random 0s and 1s
+    function createRandom2DArray(rows, cols) {
+      const array2D = [];
+
+      for (let i = 0; i < rows; i++) {
+        const row = [];
+        for (let j = 0; j < cols; j++) {
+          row.push(getRandomBinary());
+        }
+        array2D.push(row);
+      }
+
+      return array2D;
+    }
+
+    // Create a 2D array with dimensions 5x5 filled with random 0s and 1s
+    const random2DArray = createRandom2DArray(5, 5);
+
+    // Display the 2D array on the HTML page
+    document.write('<p>Random 2D Array:</p>');
+    document.write('<table>');
+    for (let i = 0; i < random2DArray.length; i++) {
+      document.write('<tr>');
+      for (let j = 0; j < random2DArray[i].length; j++) {
+        document.write('<td>' + random2DArray[i][j] + '</td>');
+      }
+      document.write('</tr>');
+    }
+    document.write('</table>');
+  </script>
+
+</body>
+</html>

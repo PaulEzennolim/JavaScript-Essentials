@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Number Display</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <div id="output"></div>
+
+  <script>
+    // Function to display numbers from 1 to 20 with odd/even labels
+    function displayNumbers() {
+      // Initialize an empty string to store the output
+      let output = '';
+
+      for (let i = 1; i <= 20; i++) {
+        // Check if the number is odd or even
+        const label = i % 2 === 0 ? 'even' : 'odd';
+
+        // Add the number along with the label to the output string
+        output += `${i} (${label})<br>`;
+      }
+
+      // Display the output on the webpage
+      document.getElementById('output').innerHTML = output;
+    }
+
+    // Call the function when the page loads
+    displayNumbers();
+  </script>
+
+</body>
+</html>

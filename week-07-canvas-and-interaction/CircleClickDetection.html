@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Circle Click Detection</title>
+  <meta name="author" content="Your Name">
+</head>
+<body>
+
+  <!-- Canvas for drawing circles -->
+  <canvas id="myCanvas" width="400" height="400" style="border: 1px solid #000;"></canvas>
+
+  <!-- Display the coordinates of the clicked circle -->
+  <div id="coordinates"></div>
+
+  <script>
+    // Get the canvas element and its 2D rendering context
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Array to store circle information (x, y, radius)
+    const circles = [
+      { x: 100, y: 100, radius: 50 },
+      { x: 200, y: 200, radius: 50 },
+      { x: 300, y: 300, radius: 50 }
+    ];
+
+    // Function to draw circles on the canvas
+    function drawCircles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      circles.forEach(circle => {
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+        ctx.stroke();
+      });
+    }
+
+    // Function to handle mouse click event
+    function handleMouseClick(event) {
+      const mouseX = event.clientX - canvas.getBoundingClientRect().left;
+      const mouseY = event.clientY - canvas.getBoundingClientRect().top;
+
+      // Check if the mouse click is inside any of the circles
+      circles.forEach((circle, index) => {
+        const distance = Math.sqrt((mouseX - circle.x) ** 2 + (mouseY - circle.y) ** 2);
+
+        if (distance <= circle.radius) {
+          // Display coordinates below the canvas
+          const coordinatesDiv = document.getElementById("coordinates");
+          coordinatesDiv.textContent = `Clicked inside Circle ${index + 1}: (${circle.x}, ${circle.y})`;
+        }
+      });
+    }
+
+    // Draw circles when the page loads
+    drawCircles();
+
+    // Add event listener for mouse click
+    canvas.addEventListener("click", handleMouseClick);
+  </script>
+
+</body>
+</html>

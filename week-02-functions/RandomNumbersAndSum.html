@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Numbers and Sum</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <script>
+    // Function to generate a random number between min (inclusive) and max (exclusive)
+    function getRandomNumber(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    // Generate an array of 10 random numbers
+    const randomNumbers = Array.from({ length: 10 }, () => getRandomNumber(1, 100));
+
+    // Display the random numbers on the HTML page
+    document.write('<p>Random Numbers: ' + randomNumbers.join(', ') + '</p>');
+
+    // Calculate and display the sum on the HTML page
+    const sum = randomNumbers.reduce((acc, num) => acc + num, 0);
+    document.write('<p>Sum: ' + sum + '</p>');
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Hello Display</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+
+<body>
+  <script>
+    // Function to read a number from the user and display 'Hello' that many times
+    function displayHello() {
+      // Read a number from the user
+      var userInput = prompt("Enter a number:");
+
+      // Check if the input is a valid number
+      if (isNaN(userInput)) {
+        alert("Invalid input. Please enter a valid number.");
+        return;
+      }
+
+      // Convert input value to a number
+      var numTimes = parseInt(userInput);
+
+      // Display 'Hello' that many times on the webpage
+      for (var i = 0; i < numTimes; i++) {
+        document.write('Hello<br>');
+      }
+    }
+
+    // Call the function when the page is loaded
+    window.onload = displayHello;
+  </script>
+</body>
+
+</html>

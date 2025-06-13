@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Circle Calculator</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <script>
+    // Function to calculate the area of a circle
+    function calculateArea(radius) {
+      return Math.PI * Math.pow(radius, 2);
+    }
+
+    // Function to calculate the circumference of a circle
+    function calculateCircumference(radius) {
+      return 2 * Math.PI * radius;
+    }
+
+    // Prompt the user for the radius input
+    const radiusInput = prompt("Enter the radius of the circle:");
+
+    // Convert the user input to a number
+    const radius = parseFloat(radiusInput);
+
+    // Check if the input is a valid number
+    if (!isNaN(radius) && radius > 0) {
+      // Calculate the area and display on the page
+      const area = calculateArea(radius);
+      document.write(`The area of the circle with radius ${radius} is: ${area.toFixed(2)}<br>`);
+
+      // Calculate the circumference and display on the page
+      const circumference = calculateCircumference(radius);
+      document.write(`The circumference of the circle with radius ${radius} is: ${circumference.toFixed(2)}`);
+    } else {
+      // Display an error message if the input is not a valid number
+      document.write("Invalid input. Please enter a valid positive number for the radius.");
+    }
+  </script>
+
+</body>
+</html>

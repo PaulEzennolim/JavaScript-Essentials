@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Investment Calculator</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+<body>
+
+  <script>
+    // Function to get a sum of money from the user
+    function getMoney(message) {
+      let userInput = prompt(message);
+      // Convert the user input to a number
+      return parseFloat(userInput);
+    }
+
+    // Function to calculate the new amount when interest is applied
+    function calculateNewAmount(principal, rate) {
+      // Calculate interest for the current year
+      const interest = principal * (rate / 100);
+      // Add interest to the principal
+      return principal + interest;
+    }
+
+    // Get the initial sum of money from the user
+    const initialSum = getMoney("Enter the initial sum of money:");
+
+    // Get the desired sum of money from the user
+    const desiredSum = getMoney("Enter the desired sum of money:");
+
+    // Get the annual rate of interest from the user
+    const annualInterestRate = getMoney("Enter the annual rate of interest:");
+
+    // Convert interest rate to decimal
+    const interestRate = annualInterestRate / 100;
+
+    // Initialize variables
+    let currentSum = initialSum;
+    let years = 0;
+
+    // Use a while loop to iterate until the current sum is greater than or equal to the desired sum
+    while (currentSum < desiredSum) {
+      // Call the function to calculate the new amount with interest
+      currentSum = calculateNewAmount(currentSum, interestRate);
+
+      // Increment the number of years
+      years++;
+    }
+
+    // Output the result using document.write
+    document.write(`It will take ${years} years to grow from ${initialSum} to ${desiredSum} at an annual interest rate of ${annualInterestRate}%.`);
+  </script>
+
+</body>
+</html>

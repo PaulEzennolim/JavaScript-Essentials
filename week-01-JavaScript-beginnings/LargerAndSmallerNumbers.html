@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Larger and Smaller Numbers</title>
+  <meta name="author" content="Paul Ezennolim">
+</head>
+
+<body>
+  <script>
+    // Function to find the larger and smaller numbers
+    function findLargerAndSmaller() {
+      // Read two numbers (x and y) from the user
+      var x = prompt("Enter the first number (x):");
+      var y = prompt("Enter the second number (y):");
+
+      // Check if the inputs are valid numbers
+      if (isNaN(x) || isNaN(y)) {
+        alert("Invalid input. Please enter valid numbers.");
+        return;
+      }
+
+      // Convert input values to numbers
+      x = parseFloat(x);
+      y = parseFloat(y);
+
+      // Determine the larger and smaller numbers
+      var largest, smallest;
+
+      if (x > y) {
+        largest = x;
+        smallest = y;
+      } else {
+        largest = y;
+        smallest = x;
+      }
+
+      // Display the results
+      alert("The larger number is: " + largest +
+            "\nThe smaller number is: " + smallest);
+    }
+
+    // Call the function when the page is loaded
+    window.onload = findLargerAndSmaller;
+  </script>
+</body>
+
+</html>

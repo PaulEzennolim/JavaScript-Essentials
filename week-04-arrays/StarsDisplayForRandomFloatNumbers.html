@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stars Display</title>
+  <meta name="author" content="Your Name">
+</head>
+<body>
+
+  <script>
+    // Function to generate a random floating-point number with 1 decimal place between min (inclusive) and max (exclusive)
+    function getRandomFloat(min, max) {
+      const randomFloat = Math.random() * (max - min) + min;
+      return parseFloat(randomFloat.toFixed(1));
+    }
+
+    // Create an array of 10 random floating-point numbers with 1 decimal place in the range 0.0 to 10.0
+    const randomNumbers = Array.from({ length: 10 }, () => getRandomFloat(0.0, 10.0));
+
+    // Display the array on the HTML page
+    document.write('<p>Random Numbers: ' + randomNumbers.join(', ') + '</p>');
+
+    // Display stars based on the integer part of each number
+    randomNumbers.forEach((number) => {
+      const integerPart = Math.floor(number);
+      const starsDisplay = '*'.repeat(integerPart);
+
+      document.write(`<p>${number} : ${starsDisplay}</p>`);
+    });
+  </script>
+
+</body>
+</html>
