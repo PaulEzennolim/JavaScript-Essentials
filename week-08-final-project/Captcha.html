@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<!--
+  Author: Paul Ezennolim
+  Module: COM1008 Web and Internet Technology
+  Assignment: JavaScript CAPTCHA
+  Description: A simple image recognition CAPTCHA application
+               using HTML5 Canvas and vanilla JavaScript.
+               Two shapes are used: a cat and a rocket, each
+               drawn from multiple canvas primitives.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaulCAPTCHA</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background-color: #eef1f5;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: #ecf0f1;
+      width: 100%;
+      text-align: center;
+      padding: 20px 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-size: 2em;
+      letter-spacing: 4px;
+    }
+
+    header h1 span {
+      color: #3498db;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      width: 90%;
+      max-width: 720px;
+      margin: 30px auto;
+      text-align: center;
+    }
+
+    /* Instruction text displayed above the canvas */
+    #instruction {
+      font-size: 1.15em;
+      margin-bottom: 14px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: #fff;
+      border-radius: 8px;
+      min-height: 48px;
+      line-height: 1.5;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    /* The main CAPTCHA canvas */
+    #captchaCanvas {
+      border: 3px solid #2c3e50;
+      border-radius: 6px;
+      display: block;
+      margin: 0 auto;
+      cursor: pointer;
+      max-width: 100%;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      transition: box-shadow 0.2s;
+    }
+
+    #captchaCanvas:hover {
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+    }
+
+    /* Container for the action buttons */
+    .button-row {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Shared button styling */
+    .btn {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1em;
+      font-weight: bold;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.25s, transform 0.12s, box-shadow 0.2s;
+      min-height: 48px;
+      min-width: 48px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      letter-spacing: 0.5px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Verify button */
+    #verifyBtn {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: #fff;
+    }
+
+    #verifyBtn:hover {
+      background: linear-gradient(135deg, #219a52, #27ae60);
+    }
+
+    #verifyBtn:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Reinitialise button */
+    #reinitBtn {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: #fff;
+    }
+
+    #reinitBtn:hover {
+      background: linear-gradient(135deg, #c0392b, #a93226);
+    }
+
+    /* Status message */
+    #statusMsg {
+      margin-top: 16px;
+      font-size: 1.1em;
+      min-height: 28px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    /* Attempts indicator */
+    #attemptsInfo {
+      margin-top: 8px;
+      font-size: 0.9em;
+      color: #7f8c8d;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 16px 10px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: #ecf0f1;
+      font-size: 0.9em;
+      margin-top: auto;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* ===== INFORMATION SECTION ===== */
+    .info-section {
+      width: 90%;
+      max-width: 720px;
+      margin: 30px auto;
+      padding: 24px 28px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      text-align: left;
+      line-height: 1.7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .info-section h2 {
+      margin-top: 16px;
+      margin-bottom: 12px;
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 6px;
+      display: inline-block;
+    }
+
+    .info-section h2:first-child {
+      margin-top: 0;
+    }
+
+    .info-section p {
+      margin-bottom: 12px;
+    }
+
+    .info-section code {
+      background-color: #ecf0f1;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.95em;
+    }
+
+    /* ===== RESPONSIVE ADJUSTMENTS ===== */
+    @media (max-width: 520px) {
+      header h1 {
+        font-size: 1.4em;
+        letter-spacing: 2px;
+      }
+
+      #instruction {
+        font-size: 1em;
+        padding: 10px 14px;
+      }
+
+      .btn {
+        padding: 10px 22px;
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== PAGE HEADER ===== -->
+  <header>
+    <h1>Paul<span>CAPTCHA</span></h1>
+  </header>
+
+  <!-- ===== MAIN CAPTCHA AREA ===== -->
+  <main>
+    <p id="instruction"></p>
+    <canvas id="captchaCanvas" width="650" height="140"></canvas>
+    <div class="button-row">
+      <button id="verifyBtn" class="btn">Verify</button>
+      <button id="reinitBtn" class="btn">Reinitialise</button>
+    </div>
+    <p id="statusMsg"></p>
+    <p id="attemptsInfo"></p>
+  </main>
+
+  <!-- ===== INFORMATION SECTION ===== -->
+  <section class="info-section">
+    <h2>How This Program Works</h2>
+    <p>
+      This CAPTCHA application displays five images in a row on an HTML5
+      Canvas element. Each image is either a <strong>cat</strong> or a
+      <strong>rocket</strong>, drawn entirely using standard canvas drawing
+      commands such as <code>arc()</code>, <code>ellipse()</code>,
+      <code>fillRect()</code>, <code>moveTo()</code> and
+      <code>lineTo()</code>. No external images are loaded.
+    </p>
+    <p>
+      The <strong>cat</strong> is composed of seven core pieces: a body
+      ellipse, a head circle, two triangular ears, two circular eyes with
+      slit pupils, and a triangular nose. It also features decorative
+      details including pink inner ears, whiskers, a small mouth and a
+      curved tail to make it visually distinctive and recognisable.
+    </p>
+    <p>
+      The <strong>rocket</strong> is composed of five core pieces: a body
+      rectangle, a triangular nose cone, two triangular side fins, and a
+      circular porthole window with a glass reflection. Decorative extras
+      include two horizontal body stripes, a rivet on the nose cone, and
+      a three-layered exhaust flame for added visual interest.
+    </p>
+    <p>
+      Every time the program runs or is reinitialised, three things are
+      randomised: (1) which of the two shapes the user is asked to find,
+      (2) how many of that shape appear (between 1 and 4 out of 5), and
+      (3) which grid positions those shapes occupy. Randomisation of
+      positions is achieved using a Fisher&ndash;Yates shuffle algorithm.
+    </p>
+    <p>
+      Clicking or tapping a cell toggles its selection, indicated by a
+      green semi-transparent overlay, a highlighted cell border, and a
+      white tick badge in the corner. Pressing <em>Verify</em> checks
+      the selection. An edge case is handled: if the user presses Verify
+      without selecting anything, a warning message is shown. A correct
+      answer displays a themed SUCCESS screen with confetti. An incorrect
+      first attempt reshuffles the images for a second try. A second
+      incorrect attempt shows a FAILED screen with a prominent X symbol
+      and locks further input. The <em>Reinitialise</em> button fully
+      resets the program at any time.
+    </p>
+
+    <h2>Mobile &amp; Desktop Compatibility</h2>
+    <p>
+      The program is designed and tested to work on both mobile and desktop
+      devices. The following techniques are employed:
+    </p>
+    <p>
+      <strong>Touch &amp; click support:</strong> The canvas listens for
+      both <code>click</code> events (mouse on desktop) and
+      <code>touchstart</code> events (finger on mobile). The
+      <code>touchstart</code> handler calls <code>preventDefault()</code>
+      to stop the browser from also firing a delayed <code>click</code>
+      event, which would cause the cell selection to toggle twice (back
+      to its original state) on touch devices.
+    </p>
+    <p>
+      <strong>Responsive sizing:</strong> The canvas uses a fixed internal
+      coordinate system (650 &times; 140 pixels) so that all drawing
+      commands produce consistent results. However, the canvas element is
+      styled with <code>max-width: 100%</code>, so it automatically scales
+      down on narrow screens. When a click or touch event occurs, screen
+      coordinates are translated to internal canvas coordinates using
+      <code>getBoundingClientRect()</code> and a computed scale factor.
+      This ensures accurate cell detection regardless of the rendered size.
+    </p>
+    <p>
+      <strong>Accessible touch targets:</strong> All interactive buttons
+      have a minimum size of 48 &times; 48 pixels, following WCAG mobile
+      accessibility guidelines. Each canvas cell measures 130 &times; 130
+      pixels in the internal coordinate system, making them comfortably
+      large for finger taps even on small phone screens.
+    </p>
+    <p>
+      <strong>Viewport meta tag:</strong> The page includes a
+      <code>&lt;meta name="viewport"&gt;</code> tag set to
+      <code>width=device-width, initial-scale=1.0</code>. This prevents
+      the browser from applying a default desktop-width zoom on mobile
+      devices, ensuring the layout fills the screen naturally on phones
+      and tablets.
+    </p>
+    <p>
+      <strong>Flexible layout:</strong> The page uses percentage-based
+      widths with a <code>max-width</code> constraint and flexbox
+      centering, so the content adapts gracefully to any screen size.
+      Buttons use <code>flex-wrap: wrap</code> so they stack vertically
+      if the viewport is too narrow to display them side by side.
+    </p>
+  </section>
+
+  <!-- ===== PAGE FOOTER ===== -->
+  <footer>
+    &copy; Paul Ezennolim 2023
+  </footer>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    /*
+     * ================================================================
+     *  PaulCAPTCHA – vanilla JavaScript + HTML5 Canvas
+     * ================================================================
+     *  Two shapes:
+     *    Cat    (7 pieces): body ellipse, head circle, 2 ear triangles,
+     *           2 eye circles, nose triangle.
+     *           Decorative: inner ears, whiskers, mouth, curved tail.
+     *
+     *    Rocket (5 pieces): body rectangle, nose-cone triangle,
+     *           2 fin triangles, porthole circle.
+     *           Decorative: body stripes, rivet, exhaust flames.
+     *
+     *  The program randomly selects which shape the user must
+     *  identify, randomly decides how many appear (1-4 out of 5),
+     *  and randomly places them using a Fisher-Yates shuffle.
+     * ================================================================
+     */
+
+    // ---- DOM REFERENCES ----
+    var canvas       = document.getElementById('captchaCanvas');
+    var ctx          = canvas.getContext('2d');
+    var instruction  = document.getElementById('instruction');
+    var verifyBtn    = document.getElementById('verifyBtn');
+    var reinitBtn    = document.getElementById('reinitBtn');
+    var statusMsg    = document.getElementById('statusMsg');
+    var attemptsInfo = document.getElementById('attemptsInfo');
+
+    // ---- CONSTANTS ----
+    var NUM_CELLS    = 5;                     // number of grid cells
+    var CELL_SIZE    = 130;                   // width & height of each cell
+    var CANVAS_W     = NUM_CELLS * CELL_SIZE; // total canvas width
+    var CANVAS_H     = CELL_SIZE;             // total canvas height
+    var BORDER_WIDTH = 2;                     // line width between cells
+    var MAX_ATTEMPTS = 2;                     // user gets two tries
+    var SHAPE_NAMES  = ['cat', 'rocket'];     // the two shape types
+
+    // Alternating subtle background for grid cells
+    var CELL_BG = ['#fdfefe', '#f4f6f7'];
+
+    // ---- STATE VARIABLES ----
+    var cells       = [];     // array of { shapeType, selected }
+    var targetShape = '';     // the shape the user must find
+    var attempts    = 0;      // how many wrong attempts so far
+    var gameOver    = false;  // true once success or two failures
+
+    // Set canvas internal dimensions
+    canvas.width  = CANVAS_W;
+    canvas.height = CANVAS_H;
+
+    /* =============================================================
+     *  UTILITY FUNCTIONS
+     * ============================================================= */
+
+    /**
+     * Returns a random integer between min and max (inclusive).
+     */
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    /**
+     * Shuffles an array in-place using the Fisher-Yates algorithm,
+     * producing a uniformly random permutation.
+     */
+    function shuffleArray(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = randomInt(0, i);
+        var temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+      }
+      return arr;
+    }
+
+    /**
+     * Counts how many cells are currently selected by the user.
+     * Used to guard against verifying with zero selections.
+     */
+    function countSelected() {
+      var count = 0;
+      for (var i = 0; i < cells.length; i++) {
+        if (cells[i].selected) {
+          count++;
+        }
+      }
+      return count;
+    }
+
+    /* =============================================================
+     *  SHAPE DRAWING – CAT
+     * ============================================================= */
+
+    /**
+     * Draws a CAT centred at (cx, cy).
+     *
+     * 7 core pieces:
+     *   1. Body ellipse
+     *   2. Head circle
+     *   3. Left ear triangle
+     *   4. Right ear triangle
+     *   5. Left eye circle (with slit pupil)
+     *   6. Right eye circle (with slit pupil)
+     *   7. Nose triangle
+     *
+     * Decorative extras: curved tail, inner ear colour,
+     * whiskers, small mouth curves.
+     */
+    function drawCat(cx, cy) {
+
+      // Tail (decorative – curved line behind the body)
+      ctx.strokeStyle = '#d35400';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx + 30, cy + 18);
+      ctx.quadraticCurveTo(cx + 52, cy - 5, cx + 42, cy - 22);
+      ctx.stroke();
+
+      // --- Piece 1: Body (ellipse) ---
+      ctx.fillStyle = '#e67e22';
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + 18, 32, 22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#d35400';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // --- Piece 2: Head (circle) ---
+      ctx.fillStyle = '#e67e22';
+      ctx.beginPath();
+      ctx.arc(cx, cy - 18, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#d35400';
+      ctx.stroke();
+
+      // --- Piece 3: Left ear (triangle) ---
+      ctx.fillStyle = '#d35400';
+      ctx.beginPath();
+      ctx.moveTo(cx - 20, cy - 32);
+      ctx.lineTo(cx - 6, cy - 32);
+      ctx.lineTo(cx - 14, cy - 52);
+      ctx.closePath();
+      ctx.fill();
+      // Pink inner ear (decorative)
+      ctx.fillStyle = '#fab1a0';
+      ctx.beginPath();
+      ctx.moveTo(cx - 18, cy - 34);
+      ctx.lineTo(cx - 9, cy - 34);
+      ctx.lineTo(cx - 14, cy - 46);
+      ctx.closePath();
+      ctx.fill();
+
+      // --- Piece 4: Right ear (triangle) ---
+      ctx.fillStyle = '#d35400';
+      ctx.beginPath();
+      ctx.moveTo(cx + 20, cy - 32);
+      ctx.lineTo(cx + 6, cy - 32);
+      ctx.lineTo(cx + 14, cy - 52);
+      ctx.closePath();
+      ctx.fill();
+      // Pink inner ear (decorative)
+      ctx.fillStyle = '#fab1a0';
+      ctx.beginPath();
+      ctx.moveTo(cx + 18, cy - 34);
+      ctx.lineTo(cx + 9, cy - 34);
+      ctx.lineTo(cx + 14, cy - 46);
+      ctx.closePath();
+      ctx.fill();
+
+      // --- Piece 5: Left eye (circle with slit pupil) ---
+      ctx.fillStyle = '#2ecc71';
+      ctx.beginPath();
+      ctx.arc(cx - 9, cy - 22, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      ctx.fillStyle = '#1a1a2e';
+      ctx.beginPath();
+      ctx.ellipse(cx - 9, cy - 22, 1.5, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // --- Piece 6: Right eye (circle with slit pupil) ---
+      ctx.fillStyle = '#2ecc71';
+      ctx.beginPath();
+      ctx.arc(cx + 9, cy - 22, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      ctx.fillStyle = '#1a1a2e';
+      ctx.beginPath();
+      ctx.ellipse(cx + 9, cy - 22, 1.5, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // --- Piece 7: Nose (inverted triangle) ---
+      ctx.fillStyle = '#e84393';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - 11);
+      ctx.lineTo(cx - 4, cy - 17);
+      ctx.lineTo(cx + 4, cy - 17);
+      ctx.closePath();
+      ctx.fill();
+
+      // Whiskers (decorative lines)
+      ctx.strokeStyle = '#7f8c8d';
+      ctx.lineWidth = 1;
+      ctx.lineCap = 'round';
+      // Left side
+      ctx.beginPath();
+      ctx.moveTo(cx - 6, cy - 13); ctx.lineTo(cx - 28, cy - 18);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - 6, cy - 11); ctx.lineTo(cx - 28, cy - 11);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - 6, cy - 9);  ctx.lineTo(cx - 26, cy - 4);
+      ctx.stroke();
+      // Right side
+      ctx.beginPath();
+      ctx.moveTo(cx + 6, cy - 13); ctx.lineTo(cx + 28, cy - 18);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 6, cy - 11); ctx.lineTo(cx + 28, cy - 11);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 6, cy - 9);  ctx.lineTo(cx + 26, cy - 4);
+      ctx.stroke();
+
+      // Mouth (decorative tiny arcs below nose)
+      ctx.strokeStyle = '#d35400';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(cx - 3, cy - 8, 3, 0, 0.8 * Math.PI);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx + 3, cy - 8, 3, 0.2 * Math.PI, Math.PI);
+      ctx.stroke();
+    }
+
+    /* =============================================================
+     *  SHAPE DRAWING – ROCKET
+     * ============================================================= */
+
+    /**
+     * Draws a ROCKET centred at (cx, cy).
+     *
+     * 5 core pieces:
+     *   1. Body rectangle
+     *   2. Nose cone triangle
+     *   3. Left fin triangle
+     *   4. Right fin triangle
+     *   5. Porthole circle (with glass and reflection)
+     *
+     * Decorative extras: three-layered exhaust flame,
+     * two body stripes, rivet dot on nose.
+     */
+    function drawRocket(cx, cy) {
+
+      // Exhaust flame (decorative – drawn first, behind body)
+      // Outer flame
+      ctx.fillStyle = '#e67e22';
+      ctx.beginPath();
+      ctx.moveTo(cx - 12, cy + 26);
+      ctx.quadraticCurveTo(cx, cy + 56, cx + 12, cy + 26);
+      ctx.closePath();
+      ctx.fill();
+      // Middle flame
+      ctx.fillStyle = '#f1c40f';
+      ctx.beginPath();
+      ctx.moveTo(cx - 7, cy + 26);
+      ctx.quadraticCurveTo(cx, cy + 48, cx + 7, cy + 26);
+      ctx.closePath();
+      ctx.fill();
+      // Inner flame (white-hot core)
+      ctx.fillStyle = '#ffeaa7';
+      ctx.beginPath();
+      ctx.moveTo(cx - 3, cy + 26);
+      ctx.quadraticCurveTo(cx, cy + 40, cx + 3, cy + 26);
+      ctx.closePath();
+      ctx.fill();
+
+      // --- Piece 1: Body (rectangle) ---
+      ctx.fillStyle = '#bdc3c7';
+      ctx.fillRect(cx - 15, cy - 28, 30, 54);
+      ctx.strokeStyle = '#7f8c8d';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(cx - 15, cy - 28, 30, 54);
+
+      // Body stripes (decorative)
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillRect(cx - 15, cy + 14, 30, 4);
+      ctx.fillStyle = '#2980b9';
+      ctx.fillRect(cx - 15, cy + 20, 30, 4);
+
+      // --- Piece 2: Nose cone (triangle) ---
+      ctx.fillStyle = '#e74c3c';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - 55);
+      ctx.lineTo(cx - 17, cy - 28);
+      ctx.lineTo(cx + 17, cy - 28);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#c0392b';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Rivet on nose (decorative dot)
+      ctx.fillStyle = '#c0392b';
+      ctx.beginPath();
+      ctx.arc(cx, cy - 38, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // --- Piece 3: Left fin (triangle) ---
+      ctx.fillStyle = '#2980b9';
+      ctx.beginPath();
+      ctx.moveTo(cx - 15, cy + 12);
+      ctx.lineTo(cx - 32, cy + 26);
+      ctx.lineTo(cx - 15, cy + 26);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#2471a3';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // --- Piece 4: Right fin (triangle) ---
+      ctx.fillStyle = '#2980b9';
+      ctx.beginPath();
+      ctx.moveTo(cx + 15, cy + 12);
+      ctx.lineTo(cx + 32, cy + 26);
+      ctx.lineTo(cx + 15, cy + 26);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#2471a3';
+      ctx.stroke();
+
+      // --- Piece 5: Porthole (circle with glass) ---
+      ctx.fillStyle = '#d5dbdb';
+      ctx.beginPath();
+      ctx.arc(cx, cy - 8, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#7f8c8d';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // Inner glass
+      ctx.fillStyle = '#85c1e9';
+      ctx.beginPath();
+      ctx.arc(cx, cy - 8, 7, 0, Math.PI * 2);
+      ctx.fill();
+      // Light reflection (decorative shine)
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.beginPath();
+      ctx.arc(cx - 2, cy - 10, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* =============================================================
+     *  DRAWING – GRID, OVERLAYS, END SCREENS
+     * ============================================================= */
+
+    /**
+     * Clears and redraws the full grid: cell backgrounds, shapes,
+     * selection overlays, and inter-cell borders.
+     */
+    function drawGrid() {
+      ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+      for (var i = 0; i < NUM_CELLS; i++) {
+        var x = i * CELL_SIZE;
+
+        // Alternating cell background
+        ctx.fillStyle = CELL_BG[i % 2];
+        ctx.fillRect(x, 0, CELL_SIZE, CELL_SIZE);
+
+        // Draw shape centred in the cell
+        var cx = x + CELL_SIZE / 2;
+        var cy = CELL_SIZE / 2;
+        if (cells[i].shapeType === 'cat') {
+          drawCat(cx, cy);
+        } else {
+          drawRocket(cx, cy);
+        }
+
+        // Selection highlight
+        if (cells[i].selected) {
+          drawSelectionOverlay(x);
+        }
+
+        // Vertical border between cells
+        if (i > 0) {
+          ctx.strokeStyle = '#2c3e50';
+          ctx.lineWidth = BORDER_WIDTH;
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, CANVAS_H);
+          ctx.stroke();
+        }
+      }
+    }
+
+    /**
+     * Draws a selection overlay on a cell: translucent green fill,
+     * green border highlight, and a tick badge in the corner.
+     */
+    function drawSelectionOverlay(x) {
+      // Green overlay
+      ctx.fillStyle = 'rgba(46, 204, 113, 0.25)';
+      ctx.fillRect(x, 0, CELL_SIZE, CELL_SIZE);
+
+      // Highlighted border
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x + 1.5, 1.5, CELL_SIZE - 3, CELL_SIZE - 3);
+
+      // Tick badge (circle + check mark)
+      var bx = x + CELL_SIZE - 20;
+      var by = CELL_SIZE - 20;
+
+      ctx.fillStyle = '#27ae60';
+      ctx.beginPath();
+      ctx.arc(bx, by, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(bx - 5, by);
+      ctx.lineTo(bx - 1, by + 5);
+      ctx.lineTo(bx + 6, by - 5);
+      ctx.stroke();
+    }
+
+    /**
+     * SUCCESS screen: gradient background, confetti, themed image
+     * (cat with crown or rocket), and large text.
+     */
+    function drawSuccessScreen() {
+      // Green gradient background
+      var grad = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
+      grad.addColorStop(0, '#27ae60');
+      grad.addColorStop(1, '#2ecc71');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+      // Confetti decoration
+      drawConfetti();
+
+      // Themed image on the left
+      if (targetShape === 'cat') {
+        drawCat(120, CANVAS_H / 2);
+        drawCrown(120, CANVAS_H / 2 - 54);
+      } else {
+        drawRocket(120, CANVAS_H / 2 - 8);
+      }
+
+      // "SUCCESS!" text with drop shadow
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = 'bold 42px Georgia, serif';
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillText('SUCCESS!', CANVAS_W / 2 + 102, CANVAS_H / 2 + 3);
+      ctx.fillStyle = '#fff';
+      ctx.fillText('SUCCESS!', CANVAS_W / 2 + 100, CANVAS_H / 2);
+
+      ctx.font = '16px Georgia, serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fillText('Verification complete', CANVAS_W / 2 + 100, CANVAS_H / 2 + 28);
+    }
+
+    /**
+     * Draws scattered confetti dots for the success screen.
+     */
+    function drawConfetti() {
+      var colours = ['#f1c40f','#e74c3c','#9b59b6','#3498db','#fff','#1abc9c'];
+      for (var i = 0; i < 35; i++) {
+        ctx.fillStyle = colours[i % colours.length];
+        ctx.globalAlpha = 0.3 + Math.random() * 0.35;
+        ctx.beginPath();
+        ctx.arc(
+          Math.random() * CANVAS_W,
+          Math.random() * CANVAS_H,
+          2 + Math.random() * 4,
+          0, Math.PI * 2
+        );
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1.0;
+    }
+
+    /**
+     * Draws a small golden crown, used above the cat on the
+     * success screen.
+     */
+    function drawCrown(cx, cy) {
+      ctx.fillStyle = '#f1c40f';
+      ctx.beginPath();
+      ctx.moveTo(cx - 14, cy + 10);
+      ctx.lineTo(cx - 14, cy);
+      ctx.lineTo(cx - 7, cy + 6);
+      ctx.lineTo(cx, cy - 4);
+      ctx.lineTo(cx + 7, cy + 6);
+      ctx.lineTo(cx + 14, cy);
+      ctx.lineTo(cx + 14, cy + 10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#f39c12';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    /**
+     * FAILED screen: red gradient background, large X in a circle,
+     * and "FAILED" text.
+     */
+    function drawFailedScreen() {
+      // Red gradient background
+      var grad = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
+      grad.addColorStop(0, '#c0392b');
+      grad.addColorStop(1, '#e74c3c');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+      // Large X symbol
+      drawBigX(120, CANVAS_H / 2);
+
+      // "FAILED" text with drop shadow
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = 'bold 42px Georgia, serif';
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillText('FAILED', CANVAS_W / 2 + 102, CANVAS_H / 2 + 3);
+      ctx.fillStyle = '#fff';
+      ctx.fillText('FAILED', CANVAS_W / 2 + 100, CANVAS_H / 2);
+
+      ctx.font = '16px Georgia, serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.fillText('No attempts remaining', CANVAS_W / 2 + 100, CANVAS_H / 2 + 28);
+    }
+
+    /**
+     * Draws a large X inside a circle for the failed screen.
+     */
+    function drawBigX(cx, cy) {
+      // Dark circle
+      ctx.fillStyle = '#922b21';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 40, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // X strokes
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx - 18, cy - 18);
+      ctx.lineTo(cx + 18, cy + 18);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 18, cy - 18);
+      ctx.lineTo(cx - 18, cy + 18);
+      ctx.stroke();
+    }
+
+    /* =============================================================
+     *  GAME LOGIC
+     * ============================================================= */
+
+    /**
+     * Generates a new random arrangement of shapes across all
+     * five cells. The target shape is unchanged (set in initialise).
+     */
+    function generateCells() {
+      cells = [];
+
+      // Random number of target images: 1 to 4
+      var targetCount = randomInt(1, 4);
+      var otherShape  = (targetShape === SHAPE_NAMES[0])
+                        ? SHAPE_NAMES[1] : SHAPE_NAMES[0];
+
+      // Build array of shape types
+      var types = [];
+      for (var i = 0; i < targetCount; i++) {
+        types.push(targetShape);
+      }
+      for (var j = targetCount; j < NUM_CELLS; j++) {
+        types.push(otherShape);
+      }
+
+      // Randomise positions
+      shuffleArray(types);
+
+      // Create cell objects
+      for (var k = 0; k < NUM_CELLS; k++) {
+        cells.push({ shapeType: types[k], selected: false });
+      }
+    }
+
+    /**
+     * Updates the attempts-remaining indicator text.
+     */
+    function updateAttemptsDisplay() {
+      var remaining = MAX_ATTEMPTS - attempts;
+      if (!gameOver) {
+        attemptsInfo.textContent = 'Attempts remaining: ' + remaining;
+      } else {
+        attemptsInfo.textContent = '';
+      }
+    }
+
+    /**
+     * Handles a click/tap on the canvas. Maps screen position
+     * to a cell index and toggles its selection.
+     */
+    function handleCanvasClick(clientX, clientY) {
+      if (gameOver) { return; }
+
+      // Screen → canvas coordinate mapping
+      var rect   = canvas.getBoundingClientRect();
+      var scaleX = canvas.width / rect.width;
+      var canvasX = (clientX - rect.left) * scaleX;
+
+      var cellIndex = Math.floor(canvasX / CELL_SIZE);
+      if (cellIndex < 0 || cellIndex >= NUM_CELLS) { return; }
+
+      cells[cellIndex].selected = !cells[cellIndex].selected;
+      drawGrid();
+    }
+
+    /**
+     * Checks whether the user's selection matches the target set.
+     * Returns true only if every target is selected and every
+     * non-target is deselected.
+     */
+    function checkAnswer() {
+      for (var i = 0; i < NUM_CELLS; i++) {
+        if ((cells[i].shapeType === targetShape) !== cells[i].selected) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    /**
+     * Verify button handler. Checks the answer and updates the
+     * game state: success, reshuffle for retry, or failure.
+     */
+    function onVerify() {
+      if (gameOver) { return; }
+
+      // Edge case: nothing selected
+      if (countSelected() === 0) {
+        statusMsg.style.color = '#e67e22';
+        statusMsg.textContent =
+          'Please select at least one image before verifying.';
+        return;
+      }
+
+      if (checkAnswer()) {
+        // CORRECT
+        gameOver = true;
+        verifyBtn.disabled = true;
+        drawSuccessScreen();
+        statusMsg.style.color = '#27ae60';
+        statusMsg.textContent = 'Well done! You passed the CAPTCHA.';
+        instruction.textContent = 'Verification complete.';
+        attemptsInfo.textContent = '';
+      } else {
+        // INCORRECT
+        attempts++;
+        updateAttemptsDisplay();
+
+        if (attempts >= MAX_ATTEMPTS) {
+          // Second failure – lock out
+          gameOver = true;
+          verifyBtn.disabled = true;
+          drawFailedScreen();
+          statusMsg.style.color = '#c0392b';
+          statusMsg.textContent =
+            'Your opportunities have been exhausted. You can no longer continue.';
+          instruction.textContent = 'Verification failed.';
+          attemptsInfo.textContent = '';
+        } else {
+          // First failure – new arrangement
+          statusMsg.style.color = '#e67e22';
+          statusMsg.textContent = 'Incorrect selection. Try again!';
+          instruction.textContent =
+            'Try again. Select all the grid cells that contain a '
+            + targetShape + '.';
+          generateCells();
+          drawGrid();
+        }
+      }
+    }
+
+    /**
+     * Initialises or reinitialises the entire program. Resets
+     * state, picks a new random target, generates cells, and draws.
+     */
+    function initialise() {
+      attempts = 0;
+      gameOver = false;
+      verifyBtn.disabled = false;
+      statusMsg.textContent = '';
+
+      // Random target shape
+      targetShape = SHAPE_NAMES[randomInt(0, SHAPE_NAMES.length - 1)];
+
+      instruction.textContent =
+        'Select all the grid cells that contain a ' + targetShape + '.';
+
+      generateCells();
+      drawGrid();
+      updateAttemptsDisplay();
+    }
+
+    /* =============================================================
+     *  EVENT LISTENERS
+     * ============================================================= */
+
+    // Desktop click
+    canvas.addEventListener('click', function (e) {
+      handleCanvasClick(e.clientX, e.clientY);
+    });
+
+    // Mobile touch (preventDefault stops double-fire)
+    canvas.addEventListener('touchstart', function (e) {
+      e.preventDefault();
+      var touch = e.touches[0];
+      handleCanvasClick(touch.clientX, touch.clientY);
+    });
+
+    // Buttons
+    verifyBtn.addEventListener('click', onVerify);
+    reinitBtn.addEventListener('click', initialise);
+
+    /* =============================================================
+     *  START
+     * ============================================================= */
+    initialise();
+  </script>
+
+</body>
+</html>

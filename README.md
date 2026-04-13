@@ -1,6 +1,6 @@
 # JavaScript Essentials
 
-A structured collection of JavaScript exercises and interactive browser-based projects, organized into 7 weekly modules. Each module builds on the previous, progressing from basic scripting through DOM manipulation to animated HTML5 Canvas applications.
+A structured collection of JavaScript exercises and interactive browser-based projects, organized into 8 weekly modules. Each module builds on the previous, progressing from basic scripting through DOM manipulation to animated HTML5 Canvas applications.
 
 ## Modules
 
@@ -96,6 +96,16 @@ Combines the Canvas API with user input, click detection, and `requestAnimationF
 | `CircleClickDetection.html` | Click a circle to display its canvas coordinates |
 | `CircleClickDetectionWithGrid.html` | Click cells in a 4×4 grid to fill them with circles |
 | `AnimatedCircleMovementClick.html` | Circle smoothly animates to wherever you click |
+
+---
+
+### [Week 08 — Final Project](week-08-final-project/)
+
+A capstone project combining Canvas drawing, click detection, and game logic into an interactive image-recognition CAPTCHA.
+
+| Exercise | Description |
+|---|---|
+| `Captcha.html` | An image-recognition CAPTCHA that draws cat and rocket shapes from canvas primitives; the user must click the correct shape to pass |
 
 ---
 
